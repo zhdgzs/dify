@@ -222,3 +222,5 @@ api/.env.backup
 
 # Clickzetta plugin development folder (keep local, ignore for PR)
 clickzetta/
+
+**/.vscode/*
