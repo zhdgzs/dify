@@ -360,5 +360,5 @@ class OnlineDriveDownloadFileRequest(BaseModel):
     Get online drive file
     """
 
-    bucket: Optional[str] = Field(None, description="The file bucket")
-    id: str = Field(..., description="The file ID")
+    id: str = Field(..., description="The id of the file")
+    bucket: Optional[str] = Field(None, description="The name of the bucket")
