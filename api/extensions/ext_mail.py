@@ -106,7 +106,7 @@ class Mail:
             return str(access_token) if access_token is not None else None
 
         except Exception as e:
-            logging.warning(f"Failed to obtain OAuth 2.0 access token: {str(e)}")
+            logging.warning("Failed to obtain OAuth 2.0 access token: %s", str(e))
             return None
 
     def send(self, to: str, subject: str, html: str, from_: Optional[str] = None):
