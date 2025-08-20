@@ -137,7 +137,7 @@ const DocumentList: FC<IDocumentListProps> = ({
         const result = aValue.localeCompare(bValue)
         return sortOrder === 'asc' ? result : -result
       }
- else {
+      else {
         const result = aValue - bValue
         return sortOrder === 'asc' ? result : -result
       }
@@ -150,7 +150,7 @@ const DocumentList: FC<IDocumentListProps> = ({
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
     }
- else {
+    else {
       setSortField(field)
       setSortOrder('desc')
     }
