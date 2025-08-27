@@ -19,11 +19,13 @@ _DIFY_SCHEMA_PATTERN = re.compile(r"^https://dify\.ai/schemas/(v\d+)/(.+)\.json$
 
 class SchemaResolutionError(Exception):
     """Base exception for schema resolution errors"""
+
     pass
 
 
 class CircularReferenceError(SchemaResolutionError):
     """Raised when a circular reference is detected"""
+
     def __init__(self, ref_uri: str, ref_path: list[str]):
         self.ref_uri = ref_uri
         self.ref_path = ref_path
@@ -32,6 +34,7 @@ class CircularReferenceError(SchemaResolutionError):
 
 class MaxDepthExceededError(SchemaResolutionError):
     """Raised when maximum resolution depth is exceeded"""
+
     def __init__(self, max_depth: int):
         self.max_depth = max_depth
         super().__init__(f"Maximum resolution depth ({max_depth}) exceeded")
@@ -39,6 +42,7 @@ class MaxDepthExceededError(SchemaResolutionError):
 
 class SchemaNotFoundError(SchemaResolutionError):
     """Raised when a referenced schema cannot be found"""
+
     def __init__(self, ref_uri: str):
         self.ref_uri = ref_uri
         super().__init__(f"Schema not found: {ref_uri}")
@@ -47,6 +51,7 @@ class SchemaNotFoundError(SchemaResolutionError):
 @dataclass
 class QueueItem:
     """Represents an item in the BFS queue"""
+
     current: Any
     parent: Optional[Any]
     key: Optional[Union[str, int]]
@@ -104,16 +109,11 @@ class SchemaResolver:
 
         # Slow path: schema contains refs, perform full resolution
         import copy
+
         result = copy.deepcopy(schema)
 
         # Initialize BFS queue
-        queue = deque([QueueItem(
-            current=result,
-            parent=None,
-            key=None,
-            depth=0,
-            ref_path=set()
-        )])
+        queue = deque([QueueItem(current=result, parent=None, key=None, depth=0, ref_path=set())])
 
         while queue:
             item = queue.popleft()
@@ -144,13 +144,9 @@ class SchemaResolver:
                     next_depth = item.depth + 1
                     if next_depth >= self.max_depth:
                         raise MaxDepthExceededError(self.max_depth)
-                    queue.append(QueueItem(
-                        current=value,
-                        parent=item.current,
-                        key=key,
-                        depth=next_depth,
-                        ref_path=item.ref_path
-                    ))
+                    queue.append(
+                        QueueItem(current=value, parent=item.current, key=key, depth=next_depth, ref_path=item.ref_path)
+                    )
 
     def _process_list(self, queue: deque, item: QueueItem) -> None:
         """Process a list item"""
@@ -159,13 +155,9 @@ class SchemaResolver:
                 next_depth = item.depth + 1
                 if next_depth >= self.max_depth:
                     raise MaxDepthExceededError(self.max_depth)
-                queue.append(QueueItem(
-                    current=value,
-                    parent=item.current,
-                    key=idx,
-                    depth=next_depth,
-                    ref_path=item.ref_path
-                ))
+                queue.append(
+                    QueueItem(current=value, parent=item.current, key=idx, depth=next_depth, ref_path=item.ref_path)
+                )
 
     def _resolve_ref(self, queue: deque, item: QueueItem, ref_uri: str) -> None:
         """Resolve a $ref reference"""
@@ -194,23 +186,21 @@ class SchemaResolver:
             # Root level replacement
             item.current.clear()
             item.current.update(resolved_schema)
-            queue.append(QueueItem(
-                current=item.current,
-                parent=None,
-                key=None,
-                depth=next_depth,
-                ref_path=new_ref_path
-            ))
+            queue.append(
+                QueueItem(current=item.current, parent=None, key=None, depth=next_depth, ref_path=new_ref_path)
+            )
         else:
             # Update parent container
             item.parent[item.key] = resolved_schema.copy()
-            queue.append(QueueItem(
-                current=item.parent[item.key],
-                parent=item.parent,
-                key=item.key,
-                depth=next_depth,
-                ref_path=new_ref_path
-            ))
+            queue.append(
+                QueueItem(
+                    current=item.parent[item.key],
+                    parent=item.parent,
+                    key=item.key,
+                    depth=next_depth,
+                    ref_path=new_ref_path,
+                )
+            )
 
     def _get_resolved_schema(self, ref_uri: str) -> Optional[SchemaDict]:
         """Get resolved schema from cache or registry"""
@@ -233,9 +223,7 @@ class SchemaResolver:
 
 
 def resolve_dify_schema_refs(
-    schema: SchemaType,
-    registry: Optional[SchemaRegistry] = None,
-    max_depth: int = 30
+    schema: SchemaType, registry: Optional[SchemaRegistry] = None, max_depth: int = 30
 ) -> SchemaType:
     """
     Resolve $ref references in Dify schema to actual schema content
@@ -353,14 +341,15 @@ def _has_dify_refs_hybrid(schema: SchemaType) -> bool:
     # Phase 1: Fast string-based pre-filtering
     try:
         import json
-        schema_str = json.dumps(schema, separators=(',', ':'))
+
+        schema_str = json.dumps(schema, separators=(",", ":"))
 
         # Quick elimination: no $ref at all
         if '"$ref"' not in schema_str:
             return False
 
         # Quick elimination: no Dify schema URLs
-        if 'https://dify.ai/schemas/' not in schema_str:
+        if "https://dify.ai/schemas/" not in schema_str:
             return False
 
     except (TypeError, ValueError, OverflowError):
