@@ -82,6 +82,9 @@ const LocaleLayout = async ({
           </BrowserInitializer>
         </ThemeProvider>
         <RoutePrefixHandle />
+        {/* <!-- Start of langgenius Zendesk Widget script --> */}
+        <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=6d6a7cea-15e5-43a0-a9c6-54a13816ef30" />
+        {/* <!-- End of langgenius Zendesk Widget script --> */}
       </body>
     </html>
   )
