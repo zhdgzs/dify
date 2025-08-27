@@ -12,7 +12,7 @@ import OutputVars, { VarItem } from '@/app/components/workflow/nodes/_base/compo
 import StructureOutputItem from '@/app/components/workflow/nodes/_base/components/variable/object-child-tree-panel/show'
 import { useStore } from '@/app/components/workflow/store'
 import { wrapStructuredVarItem } from '@/app/components/workflow/utils/tool'
-import { useInitial } from './use-initial'
+import useMatchSchemaType from '../_base/components/variable/use-match-schema-type'
 
 const i18nPrefix = 'workflow.nodes.tool'
 
@@ -21,7 +21,6 @@ const Panel: FC<NodePanelProps<ToolNodeType>> = ({
   data,
 }) => {
   const { t } = useTranslation()
-  useInitial(id)
   const {
     readOnly,
     inputs,
@@ -41,6 +40,7 @@ const Panel: FC<NodePanelProps<ToolNodeType>> = ({
   const [collapsed, setCollapsed] = React.useState(false)
   const pipelineId = useStore(s => s.pipelineId)
   const setShowInputFieldPanel = useStore(s => s.setShowInputFieldPanel)
+  const { getMatchedSchemaType } = useMatchSchemaType()
 
   if (isLoading) {
     return <div className='flex h-[200px] items-center justify-center'>
@@ -122,7 +122,7 @@ const Panel: FC<NodePanelProps<ToolNodeType>> = ({
                 {outputItem.value?.type === 'object' ? (
                   <StructureOutputItem
                     rootClassName='code-sm-semibold text-text-secondary'
-                    payload={wrapStructuredVarItem(outputItem)} />
+                    payload={wrapStructuredVarItem(outputItem, getMatchedSchemaType(outputItem.value))} />
                 ) : (
                   <VarItem
                     name={outputItem.name}

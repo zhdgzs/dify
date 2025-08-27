@@ -50,6 +50,7 @@ export const CHUNK_TYPE_MAP = {
   qa_chunks: 'QAStructureChunk',
 }
 
+// deprecated, use schemaType in llm/types.ts instead
 export const getOutputVariableAlias = (variable: Record<string, any>) => {
   if (variable?.general_chunks)
     return CHUNK_TYPE_MAP.general_chunks
@@ -60,7 +61,8 @@ export const getOutputVariableAlias = (variable: Record<string, any>) => {
   if (variable?.file_type)
     return 'file'
 }
-export const wrapStructuredVarItem = (outputItem: any): StructuredOutput => {
+
+export const wrapStructuredVarItem = (outputItem: any, matchedSchemaType: string): StructuredOutput => {
   const dataType = Type.object
   return {
     schema: {
@@ -68,7 +70,7 @@ export const wrapStructuredVarItem = (outputItem: any): StructuredOutput => {
       properties: {
         [outputItem.name]: {
           ...outputItem.value,
-          alias: getOutputVariableAlias(outputItem.value?.properties),
+          schemaType: matchedSchemaType,
         },
       },
       additionalProperties: false,

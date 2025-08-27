@@ -10,14 +10,11 @@ export const checkNodeValid = (_payload: LLMNodeType) => {
 }
 
 export const getFieldType = (field: Field) => {
-  const { type, items, alias } = field
-  if (type !== Type.array || !items) {
-    if (alias)
-      return alias
+  const { type, items } = field
+  if (type !== Type.array || !items)
     return type
-  }
 
-  return ArrayType[items.type]
+  return ArrayType[items.type as keyof typeof ArrayType]
 }
 
 export const getHasChildren = (schema: Field) => {
@@ -306,6 +303,7 @@ export const getValidationErrorMessage = (errors: ValidationError[]) => {
   return message
 }
 
+// Previous Not support boolean type, so transform boolean to string when paste it into schema editor
 export const convertBooleanToString = (schema: any) => {
   if (schema.type === Type.boolean)
     schema.type = Type.string
