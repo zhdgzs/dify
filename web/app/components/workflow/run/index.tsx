@@ -131,7 +131,7 @@ const RunPanel: FC<RunProps> = ({ hideResult, activeTab = 'RESULT', runID, getRe
         >{t('runLog.tracing')}</div>
       </div>
       {/* panel detail */}
-      <div ref={ref} className={cn('relative h-0 grow overflow-y-auto rounded-b-2xl bg-components-panel-bg')}>
+      <div ref={ref} className={cn('relative h-0 grow overflow-y-auto rounded-b-xl bg-components-panel-bg')}>
         {loading && (
           <div className='flex h-full items-center justify-center bg-components-panel-bg'>
             <Loading />
@@ -147,7 +147,10 @@ const RunPanel: FC<RunProps> = ({ hideResult, activeTab = 'RESULT', runID, getRe
         {!loading && currentTab === 'DETAIL' && runDetail && (
           <ResultPanel
             inputs={runDetail.inputs}
+            inputs_truncated={runDetail.inputs_truncated}
             outputs={runDetail.outputs}
+            outputs_truncated={runDetail.outputs_truncated}
+            outputs_full_content={runDetail.outputs_full_content}
             status={runDetail.status}
             error={runDetail.error}
             elapsed_time={runDetail.elapsed_time}
