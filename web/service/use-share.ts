@@ -6,13 +6,10 @@ const NAME_SPACE = 'webapp'
 export const useGetWebAppAccessModeByCode = (code: string | null) => {
   return useQuery({
     queryKey: [NAME_SPACE, 'appAccessMode', code],
-    queryFn: () => {
-      if (!code || code.length === 0)
-        return Promise.reject(new Error('App code is required to get access mode'))
-
-      return getAppAccessModeByAppCode(code)
-    },
+    queryFn: () => getAppAccessModeByAppCode(code!),
     enabled: !!code,
+    staleTime: 0, // backend change the access mode may cause the logic error. Because /permission API is no cached.
+    gcTime: 0,
   })
 }
 
